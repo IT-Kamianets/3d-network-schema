@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "result.schema.json",
+  "title": "Result (v1)",
+  "description": "How a session ended: who won and each side's score. What a score means and which stats exist is game-defined.",
+  "$defs": {
+    "Result": {
+      "type": "object",
+      "properties": {
+        "endedAt": { "$ref": "common.schema.json#/$defs/Timestamp" },
+        "reason": {
+          "description": "completed: the game's own win condition. abandoned: too many players left. cancelled: the host or server stopped it.",
+          "type": "string",
+          "enum": ["completed", "abandoned", "cancelled"]
+        },
+        "winners": {
+          "description": "teamIds or playerIds, whichever the game ranks by. Empty for a draw.",
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/Id" }
+        },
+        "scores": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Score" }
+        },
+        "data": { "$ref": "common.schema.json#/$defs/Data" }
+      },
+      "required": ["endedAt", "reason", "winners", "scores"],
+      "additionalProperties": false
+    },
+    "Score": {
+      "description": "One team's or one player's score; exactly one of teamId and playerId.",
+      "type": "object",
+      "properties": {
+        "teamId": { "$ref": "common.schema.json#/$defs/Id" },
+        "playerId": { "$ref": "common.schema.json#/$defs/Id" },
+        "score": { "type": "number" },
+        "stats": {
+          "description": "Game-defined numbers, e.g. kills, deaths, spellsCast.",
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        }
+      },
+      "required": ["score"],
+      "oneOf": [{ "required": ["teamId"] }, { "required": ["playerId"] }],
+      "additionalProperties": false
+    }
+  }
+}

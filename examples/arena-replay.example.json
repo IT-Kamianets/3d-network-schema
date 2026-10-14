@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0.0",
+  "session": {
+    "schemaVersion": "1.0.0",
+    "sessionId": "match-7f3a",
+    "mode": "temnorid-arena.competitive",
+    "sceneId": "arena-ruins",
+    "state": "running",
+    "maxPlayers": 4,
+    "teams": [
+      { "teamId": "light", "name": "Light" },
+      { "teamId": "dark", "name": "Dark" }
+    ],
+    "players": [
+      { "playerId": "p-ira", "displayName": "Ira", "teamId": "light", "role": "player", "connected": true },
+      { "playerId": "p-max", "displayName": "Max", "teamId": "light", "role": "player", "connected": true },
+      { "playerId": "p-oleh", "displayName": "Oleh", "teamId": "dark", "role": "player", "connected": true },
+      { "playerId": "bot-1", "displayName": "Bot", "teamId": "dark", "role": "bot", "connected": true }
+    ],
+    "createdAt": "2026-10-14T18:00:00Z",
+    "startedAt": "2026-10-14T18:01:30Z",
+    "settings": { "roundsToWin": 2, "roundSeconds": 115 }
+  },
+  "messages": [
+    {
+      "schemaVersion": "1.0.0",
+      "messageId": "m-1",
+      "sessionId": "match-7f3a",
+      "seq": 1,
+      "tick": 0,
+      "sentAt": "2026-10-14T18:01:30Z",
+      "from": "server",
+      "type": "temnorid-arena.round-started",
+      "payload": { "round": 1 }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "messageId": "m-2",
+      "sessionId": "match-7f3a",
+      "seq": 2,
+      "tick": 2210,
+      "sentAt": "2026-10-14T18:02:04Z",
+      "from": "server",
+      "type": "temnorid-arena.player-defeated",
+      "payload": { "playerId": "p-oleh", "byPlayerId": "p-ira", "spell": "fireball" }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "messageId": "m-3",
+      "sessionId": "match-7f3a",
+      "seq": 3,
+      "tick": 2890,
+      "sentAt": "2026-10-14T18:02:15Z",
+      "from": "server",
+      "type": "session.left",
+      "payload": { "playerId": "p-oleh", "reason": "disconnected" }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "messageId": "m-4",
+      "sessionId": "match-7f3a",
+      "seq": 4,
+      "tick": 3400,
+      "sentAt": "2026-10-14T18:02:23Z",
+      "from": "server",
+      "type": "temnorid-arena.round-ended",
+      "payload": { "round": 1, "winnerTeamId": "light", "reason": "team-defeated" }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "messageId": "m-5",
+      "sessionId": "match-7f3a",
+      "seq": 5,
+      "tick": 3500,
+      "sentAt": "2026-10-14T18:02:25Z",
+      "from": "server",
+      "type": "session.joined",
+      "payload": {
+        "player": { "playerId": "p-oleh", "displayName": "Oleh", "teamId": "dark", "role": "player", "connected": true }
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "messageId": "m-6",
+      "sessionId": "match-7f3a",
+      "seq": 6,
+      "tick": 9120,
+      "sentAt": "2026-10-14T18:04:02Z",
+      "from": "server",
+      "type": "temnorid-arena.round-ended",
+      "payload": { "round": 2, "winnerTeamId": "light", "reason": "objective-captured" }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "messageId": "m-7",
+      "sessionId": "match-7f3a",
+      "seq": 7,
+      "tick": 9130,
+      "sentAt": "2026-10-14T18:04:03Z",
+      "from": "server",
+      "type": "session.ended",
+      "payload": {
+        "endedAt": "2026-10-14T18:04:03Z",
+        "reason": "completed",
+        "winners": ["light"],
+        "scores": [
+          { "teamId": "light", "score": 2 },
+          { "teamId": "dark", "score": 0 },
+          { "playerId": "p-ira", "score": 3, "stats": { "defeats": 3, "defeated": 0, "spellsCast": 41 } },
+          { "playerId": "p-oleh", "score": 1, "stats": { "defeats": 1, "defeated": 2, "spellsCast": 27 } }
+        ]
+      }
+    }
+  ]
+}

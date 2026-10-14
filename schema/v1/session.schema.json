@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "session.schema.json",
+  "title": "Session (v1)",
+  "description": "One multiplayer session: who is in it, on which scene, and where it is in its lifecycle. Engine- and game-independent: modes, settings and rules are game-defined names and data.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "sessionId": { "$ref": "common.schema.json#/$defs/Id" },
+    "mode": {
+      "allOf": [{ "$ref": "common.schema.json#/$defs/GameName" }],
+      "description": "Which game and mode this session runs, e.g. `temnorid-arena.competitive`."
+    },
+    "sceneId": {
+      "allOf": [{ "$ref": "common.schema.json#/$defs/Id" }],
+      "description": "The `sceneId` of a 3d-scene-schema document the session plays on. Omitted while no scene is chosen yet (e.g. a lobby before a map vote)."
+    },
+    "state": { "$ref": "#/$defs/SessionState" },
+    "maxPlayers": { "type": "integer", "minimum": 1 },
+    "teams": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Team" }
+    },
+    "players": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Player" }
+    },
+    "createdAt": { "$ref": "common.schema.json#/$defs/Timestamp" },
+    "startedAt": { "$ref": "common.schema.json#/$defs/Timestamp" },
+    "endedAt": { "$ref": "common.schema.json#/$defs/Timestamp" },
+    "settings": { "$ref": "common.schema.json#/$defs/Data" },
+    "metadata": { "$ref": "common.schema.json#/$defs/Metadata" }
+  },
+  "required": ["schemaVersion", "sessionId", "mode", "state", "players", "createdAt"],
+  "additionalProperties": false,
+  "$defs": {
+    "SessionState": {
+      "description": "lobby: players gather. starting: loading the scene. running: the match is on. ended: a result exists.",
+      "type": "string",
+      "enum": ["lobby", "starting", "running", "ended"]
+    },
+    "Team": {
+      "type": "object",
+      "properties": {
+        "teamId": { "$ref": "common.schema.json#/$defs/Id" },
+        "name": { "type": "string" },
+        "metadata": { "$ref": "common.schema.json#/$defs/Metadata" }
+      },
+      "required": ["teamId"],
+      "additionalProperties": false
+    },
+    "Player": {
+      "type": "object",
+      "properties": {
+        "playerId": { "$ref": "common.schema.json#/$defs/Id" },
+        "displayName": { "type": "string" },
+        "teamId": { "$ref": "common.schema.json#/$defs/Id" },
+        "role": {
+          "type": "string",
+          "enum": ["player", "spectator", "bot"],
+          "default": "player"
+        },
+        "connected": { "type": "boolean" },
+        "metadata": { "$ref": "common.schema.json#/$defs/Metadata" }
+      },
+      "required": ["playerId", "connected"],
+      "additionalProperties": false
+    }
+  }
+}

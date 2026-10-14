@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1.0.0",
+  "messageId": "c-91",
+  "sessionId": "match-7f3a",
+  "sentAt": "2026-10-14T18:00:12Z",
+  "from": "p-ira",
+  "type": "session.join",
+  "payload": { "displayName": "Ira", "role": "player" }
+}

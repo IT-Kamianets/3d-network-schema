@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "message.schema.json",
+  "title": "Message (v1)",
+  "description": "One session message: an envelope plus a typed payload. `session.*` types are defined here; any other type is a game event named `<game>.<name>` with game-defined data. High-frequency state (positions and inputs every tick) is NOT sent as messages: it stays in the networking backend's binary stream.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "messageId": { "$ref": "common.schema.json#/$defs/Id" },
+    "sessionId": { "$ref": "common.schema.json#/$defs/Id" },
+    "seq": {
+      "description": "Order within the session, set by the server. Starts at 1 with no gaps, so a client or a replay can tell a message is missing.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "tick": {
+      "description": "Server simulation tick the message belongs to, when the game runs on ticks.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "sentAt": { "$ref": "common.schema.json#/$defs/Timestamp" },
+    "from": {
+      "description": "`server`, or the playerId of the sending client. The server is the authority: a client's request only counts once the server sends it on as its own message.",
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "anyOf": [
+        { "$ref": "#/$defs/SessionType" },
+        { "$ref": "common.schema.json#/$defs/GameName" }
+      ]
+    },
+    "payload": { "type": "object" }
+  },
+  "required": ["schemaVersion", "messageId", "sessionId", "sentAt", "from", "type", "payload"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "description": "Every message from the server has a seq; a client's message never does, since it is only a request until the server accepts it.",
+      "if": { "properties": { "from": { "const": "server" } } },
+      "then": { "required": ["seq"] },
+      "else": { "not": { "required": ["seq"] } }
+    },
+    {
+      "description": "Only the server sends session messages other than a join request.",
+      "if": { "properties": { "from": { "not": { "const": "server" } } } },
+      "then": {
+        "properties": {
+          "type": {
+            "not": {
+              "enum": ["session.joined", "session.left", "session.snapshot", "session.state-changed", "session.ended"]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "session.join" } } },
+      "then": { "properties": { "payload": { "$ref": "#/$defs/JoinPayload" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "session.joined" } } },
+      "then": { "properties": { "payload": { "$ref": "#/$defs/PlayerPayload" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "session.left" } } },
+      "then": { "properties": { "payload": { "$ref": "#/$defs/LeftPayload" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "session.snapshot" } } },
+      "then": { "properties": { "payload": { "$ref": "#/$defs/SnapshotPayload" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "session.state-changed" } } },
+      "then": { "properties": { "payload": { "$ref": "#/$defs/StateChangedPayload" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "session.ended" } } },
+      "then": { "properties": { "payload": { "$ref": "result.schema.json#/$defs/Result" } } }
+    },
+    {
+      "if": { "properties": { "type": { "$ref": "common.schema.json#/$defs/GameName" } } },
+      "then": { "properties": { "payload": { "$ref": "common.schema.json#/$defs/Data" } } }
+    }
+  ],
+  "$defs": {
+    "SessionType": {
+      "type": "string",
+      "enum": [
+        "session.join",
+        "session.joined",
+        "session.left",
+        "session.snapshot",
+        "session.state-changed",
+        "session.ended"
+      ]
+    },
+    "JoinPayload": {
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["player", "spectator"], "default": "player" },
+        "data": { "$ref": "common.schema.json#/$defs/Data" }
+      },
+      "additionalProperties": false
+    },
+    "PlayerPayload": {
+      "type": "object",
+      "properties": {
+        "player": { "$ref": "session.schema.json#/$defs/Player" }
+      },
+      "required": ["player"],
+      "additionalProperties": false
+    },
+    "LeftPayload": {
+      "type": "object",
+      "properties": {
+        "playerId": { "$ref": "common.schema.json#/$defs/Id" },
+        "reason": { "type": "string", "enum": ["quit", "disconnected", "kicked"] }
+      },
+      "required": ["playerId", "reason"],
+      "additionalProperties": false
+    },
+    "SnapshotPayload": {
+      "description": "The whole session as it is now. Sent to a player who joins or reconnects, so they need no history.",
+      "type": "object",
+      "properties": {
+        "session": { "$ref": "session.schema.json" }
+      },
+      "required": ["session"],
+      "additionalProperties": false
+    },
+    "StateChangedPayload": {
+      "type": "object",
+      "properties": {
+        "state": { "$ref": "session.schema.json#/$defs/SessionState" },
+        "sceneId": { "$ref": "common.schema.json#/$defs/Id" }
+      },
+      "required": ["state"],
+      "additionalProperties": false
+    }
+  }
+}

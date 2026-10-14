@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "replay.schema.json",
+  "title": "Replay (v1)",
+  "description": "A finished session as one document: the session as it started, then every server message in order. Enough to rebuild the timeline, scoreboard and event feed without running the game; not a frame-by-frame recording, which needs the backend's own state stream.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "session": {
+      "allOf": [{ "$ref": "session.schema.json" }],
+      "description": "The session when it started running."
+    },
+    "messages": {
+      "description": "Server messages only, ordered by seq. Client requests are left out: what counted is what the server sent on.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "allOf": [{ "$ref": "message.schema.json" }],
+        "properties": { "from": { "const": "server" } }
+      }
+    }
+  },
+  "required": ["schemaVersion", "session", "messages"],
+  "additionalProperties": false
+}

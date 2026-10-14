@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "common.schema.json",
+  "title": "Common definitions",
+  "description": "Shared primitive types reused across the network schema.",
+  "$defs": {
+    "Id": {
+      "description": "Opaque identifier. The schema never assumes a format (UUID, Firebase uid, ...).",
+      "type": "string",
+      "minLength": 1
+    },
+    "Timestamp": { "type": "string", "format": "date-time" },
+    "GameName": {
+      "description": "A game-defined name, namespaced by the game: `<game>.<name>`, e.g. `temnorid-arena.round-ended`. The `session` namespace is reserved for this schema.",
+      "type": "string",
+      "pattern": "^(?!session\\.)[a-z0-9-]+\\.[a-z0-9.-]+$"
+    },
+    "Data": {
+      "description": "Game-defined content. The schema does not look inside it; the game documents its own shapes.",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "Metadata": {
+      "type": "object",
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
